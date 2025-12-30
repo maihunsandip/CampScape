@@ -1,6 +1,4 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
@@ -25,11 +23,7 @@ const { object } = require("joi");
 
 const dbUrl = process.env.DB_URL;
 //  "mongodb://localhost:27017/Camp-Scape";
-
-mongoose.connect(dbUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection error:"));
@@ -38,6 +32,8 @@ db.once("open", () => {
 });
 
 const app = express();
+
+app.locals.currentUser = null;
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -75,6 +71,7 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
+
 const scriptSrcUrls = [
   "https://stackpath.bootstrapcdn.com/",
   "https://kit.fontawesome.com/",
@@ -90,17 +87,23 @@ const styleSrcUrls = [
   "https://cdn.jsdelivr.net",
   "https://cdn.maptiler.com/",
 ];
-const connectSrcUrls = ["https://api.maptiler.com/"];
+const connectSrcUrls = [
+  "'self'",
+  "https://api.maptiler.com",
+  "https://cdn.maptiler.com",
+  "https://cdn.jsdelivr.net",
+];
 const fontSrcUrls = [];
 
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: [],
-      connectSrc: ["'self'", ...connectSrcUrls],
-      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+      defaultSrc: ["'self'"],
+      connectSrc: connectSrcUrls,
+      scriptSrc: ["'self'", "'unsafe-inline'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
       workerSrc: ["'self'", "blob:"],
-      objectSrc: [],
+      objectSrc: ["'none'"],
       imgSrc: [
         "'self'",
         "blob:",
@@ -122,7 +125,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
-  console.log(req.session);
+  // console.log(req.session); for debugging purposes
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");

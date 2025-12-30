@@ -7,3 +7,60 @@
     width: 100%;
     height: 300px;
 }
+
+   /* Campground Show Page – Mobile */
+
+
+@media (max-width: 768px) {
+  /* Stack columns nicely */
+  .row > div[class^="col-"] {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Carousel images – prevent overflow */
+  .carousel-item img {
+    object-fit: cover;
+    max-height: 250px;
+  }
+
+  /* Card spacing */
+  .card {
+    margin-bottom: 1.25rem;
+  }
+
+  /* Title + author alignment */
+  .card-body .d-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-body .d-flex p {
+    margin-left: 0 !important;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  /* Map responsiveness */
+  #map {
+    height: 250px !important;
+    margin-bottom: 1rem;
+  }
+
+  /* Review form spacing */
+  form.validated-form {
+    margin-top: 1rem;
+  }
+
+  /* Buttons full-width on mobile */
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Inline delete/edit buttons */
+  form.d-inline {
+    display: block !important;
+  }
+}
